@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<section class="section-intro">
+    <div class="container my-4">
+        <div class="jumbotron p-5 text-white rounded bg-primary" style="background: linear-gradient(135deg, #3167eb 0%, #1a42a7 100%);">
+            <div class="col-md-9 px-0">
+                <h1 class="display-4 font-weight-bold">Roupas para crescer, amor para passar.</h1>
+                <p class="lead my-3">Explore desapegos incríveis para comprar ou encontre itens de doação e desapegue do que não serve mais no mesmo lugar.</p>
+                <div class="mt-4 d-flex flex-wrap" style="gap: 12px;">
+                    <a href="{% url 'visualizarLoja' %}" class="btn btn-light btn-lg font-weight-bold text-primary shadow-sm">
+                        <i class="fas fa-shopping-bag"></i> Explorar Desapegos
+                    </a>
+                    <a href="{% url 'cadastrar_produto' %}" class="btn btn-warning btn-lg font-weight-bold text-dark shadow-sm">
+                        <i class="fas fa-plus-circle"></i> Criar um Anúncio
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-specials padding-y-sm border-bottom bg-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <figure class="itemside align-items-center">
+                    <div class="aside-sm">
+                        <span class="icon-sm rounded-circle bg-primary-light text-primary">
+                            <i class="fa fa-money-bill-wave"></i>
+                        </span>
+                    </div>
+                    <figcaption class="info">
+                        <h6 class="title">Economia Circular</h6>
+                        <p class="text-muted small">Roupas seminovas com excelente custo-benefício.</p>
+                    </figcaption>
+                </figure>
+            </div>
+            <div class="col-md-4">
+                <figure class="itemside align-items-center">
+                    <div class="aside-sm">
+                        <span class="icon-sm rounded-circle bg-success-light text-success">
+                            <i class="fa fa-heart"></i>
+                        </span>
+                    </div>
+                    <figcaption class="info">
+                        <h6 class="title">Opção de Doação</h6>
+                        <p class="text-muted small">Muitos desapegos são postados de forma 100% gratuita.</p>
+                    </figcaption>
+                </figure>
+            </div>
+            <div class="col-md-4">
+                <figure class="itemside align-items-center">
+                    <div class="aside-sm">
+                        <span class="icon-sm rounded-circle bg-warning-light text-warning">
+                            <i class="fa fa-handshake"></i>
+                        </span>
+                    </div>
+                    <figcaption class="info">
+                        <h6 class="title">Negociação Direta</h6>
+                        <p class="text-muted small">Manifeste seu interesse e combine a entrega direto com o anunciante.</p>
+                    </figcaption>
+                </figure>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-content padding-y bg-light">
+    <div class="container">
+        
+        <header class="section-heading mb-4 d-flex justify-content-between align-items-center">
+            <h3 class="title-section font-weight-bold text-dark mb-0">Doações Disponíveis</h3>
+            <a href="{% url 'visualizarLoja' %}?tipo=DOACAO" class="btn btn-outline-success btn-sm font-weight-bold">Ver Todas as Doações</a>
+        </header>
+
+        <div class="row mb-5">
+            {% if doacoes %}
+                {% for produto in doacoes %}
+                    <div class="col-md-3 col-sm-6 mb-4">
+                        <div class="card card-product-grid shadow-sm h-100 border-0 position-relative">
+                            <span class="badge badge-success position-absolute p-2" style="top: 10px; left: 10px; z-index: 10;">Grátis / Doação</span>
+                            <a href="{% url 'detalhe_produto' produto.slug %}" class="img-wrap p-3 text-center bg-white rounded-top" style="height: 220px; display: block;">
+                                {% if produto.produto_imagens %}
+                                    <img src="{{ produto.produto_imagens.url }}" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                                {% else %}
+                                    <img src="{% static 'images/no-image.png' %}" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                                {% endif %}
+                            </a>
+                            <div class="card-body border-top p-3 d-flex flex-column justify-content-between">
+                                <div>
+                                    <a href="{% url 'detalhe_produto' produto.slug %}" class="title text-dark font-weight-bold d-block text-truncate mb-1">{{ produto.produto_nome }}</a>
+                                    <p class="text-muted small mb-2">{{ produto.produto_categoria.categoria_nome }}</p>
+                                </div>
+                                <div class="price-wrap mt-2">
+                                    <span class="price h5 font-weight-bold text-success">Grátis</span>
+                                </div>
+                                <a href="{% url 'detalhe_produto' produto.slug %}" class="btn btn-block btn-primary btn-sm mt-2">Ver Detalhes</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-light text-center p-4 border shadow-sm" role="alert">
+                        <i class="fas fa-heart text-muted fa-2x mb-2 d-block"></i>
+                        Nenhuma doação disponível no momento. 
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <header class="section-heading mb-4 d-flex justify-content-between align-items-center">
+            <h3 class="title-section font-weight-bold text-dark mb-0">Produtos à Venda</h3>
+            <a href="{% url 'visualizarLoja' %}?tipo=VENDA" class="btn btn-outline-primary btn-sm font-weight-bold">Ver Todos</a>
+        </header>
+
+        <div class="row">
+            {% if vendas %}
+                {% for produto in vendas %}
+                    <div class="col-md-3 col-sm-6 mb-4">
+                        <div class="card card-product-grid shadow-sm h-100 border-0">
+                            <a href="{% url 'detalhe_produto' produto.slug %}" class="img-wrap p-3 text-center bg-white rounded-top" style="height: 220px; display: block;">
+                                {% if produto.produto_imagens %}
+                                    <img src="{{ produto.produto_imagens.url }}" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                                {% else %}
+                                    <img src="{% static 'images/no-image.png' %}" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                                {% endif %}
+                            </a>
+                            <div class="card-body border-top p-3 d-flex flex-column justify-content-between">
+                                <div>
+                                    <a href="{% url 'detalhe_produto' produto.slug %}" class="title text-dark font-weight-bold d-block text-truncate mb-1">{{ produto.produto_nome }}</a>
+                                    <p class="text-muted small mb-2">{{ produto.produto_categoria.categoria_nome }}</p>
+                                </div>
+                                <div class="price-wrap mt-2">
+                                    <span class="price h5 font-weight-bold text-primary">R$ {{ produto.produto_preco }}</span>
+                                </div>
+                                <a href="{% url 'detalhe_produto' produto.slug %}" class="btn btn-block btn-primary btn-sm mt-2">Ver Detalhes</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-warning text-center p-4 shadow-sm" role="alert">
+                        <i class="fas fa-box-open fa-2x mb-2 d-block text-muted"></i>
+                        Nenhum item à venda cadastrado no momento.
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

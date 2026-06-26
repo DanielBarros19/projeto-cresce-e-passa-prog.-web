@@ -1,0 +1,50 @@
+{% load static %}
+<footer class="section-footer bg-light border-top mt-5">
+    <div class="container py-5">
+        <div class="row">
+            
+            <div class="col-md-4 col-12 mb-4 mb-md-0">
+                <h6 class="title font-weight-bold text-uppercase mb-3" style="color: #3167eb;">Cresce e Passa</h6>
+                <p class="text-muted small pr-md-4">
+                    Roupas para crescer, amor para passar. Uma plataforma de economia circular criada para ajudar você a desapegar com carinho e economizar de forma consciente.
+                </p>
+            </div>
+
+            <div class="col-md-4 col-sm-6 mb-4 mb-md-0">
+                <h6 class="title font-weight-bold text-uppercase mb-3" style="color: #495057;">Contato e Suporte</h6>
+                <ul class="list-unstyled text-muted small">
+                    <li class="mb-2">
+                        <i class="fas fa-envelope fa-fw mr-2 text-primary"></i> 
+                        suporte@crescepassa.com.br
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-phone-alt fa-fw mr-2 text-primary"></i> 
+                        (65) 3000-0000
+                    </li>
+
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-md-4 col-sm-6">
+                <h6 class="title font-weight-bold text-uppercase mb-3" style="color: #495057;">Links Úteis</h6>
+                <ul class="list-unstyled small">
+                    <li class="mb-2"><a href="{% url 'visualizarLoja' %}" class="text-muted text-decoration-none">Ver Vitrine / Loja</a></li>
+                    <li class="mb-2"><a href="{% url 'cadastrar_produto' %}" class="text-muted text-decoration-none">Criar Novo Anúncio</a></li>
+                    <li class="mb-2"><a href="{% url 'perfil_usuario' %}" class="text-muted text-decoration-none">Minha Conta</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="py-3 text-muted small border-top" style="background-color: #f8f9fa;">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center text-md-left">
+                    &copy; 2026 Cresce & Passa. Todos os direitos reservados.
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>

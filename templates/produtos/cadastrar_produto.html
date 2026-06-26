@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<section class="section-content padding-y bg-light border-top">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col">
+                <h2 class="title-page font-weight-bold mb-1">{{ titulo_pagina|default:"Cadastrar Novo Anúncio" }}</h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-transparent p-0 small">
+                        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">{% if produto %}Editar Anúncio{% else %}Anunciar{% endif %}</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-content padding-y">
+    <div class="container">
+        <div class="row">
+            
+            <main class="col-md-8">
+                <form method="POST" enctype="multipart/form-data" class="bg-white p-5 rounded shadow-sm border">
+                    {% csrf_token %}
+                    
+                    {% include 'includes/alerts.html' %}
+                    {% if form.errors %}
+    <div class="alert alert-danger">
+        <strong>Erro no formulário:</strong>
+        <ul>
+            {% for field, errors in form.errors.items %}
+                <li>{{ field }}: {{ errors|striptags }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+                    
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <label class="font-weight-bold">Título do Anúncio *</label>
+                            <input type="text" name="produto_nome" class="form-control" placeholder="Ex: Macacão Bebê Algodão 3 meses" value="{{ produto.produto_nome|default:'' }}" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label class="font-weight-bold">Categoria *</label>
+                            <select name="produto_categoria" class="form-control" required>
+                                <option value="" {% if not produto %}selected{% endif %} disabled>Selecione...</option>
+                                {% for categoria in listaCategorias %}
+                                    <option value="{{ categoria.id }}" {% if produto.produto_categoria.id == categoria.id %}selected{% endif %}>
+                                        {{ categoria.categoria_nome }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group col-md-6">
+                            <label class="font-weight-bold">Tipo de Anúncio *</label>
+                            <div class="card p-2 bg-light border d-flex flex-row justify-content-around">
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" id="radioVenda" name="produto_tipo" value="VENDA" class="custom-control-input" {% if not produto or produto.produto_tipo == 'VENDA' %}checked{% endif %}>
+                                    <label class="custom-control-label font-weight-bold" for="radioVenda">Apenas Venda</label>
+                                </div>
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" id="radioDoacao" name="produto_tipo" value="DOACAO" class="custom-control-input" {% if produto.produto_tipo == 'DOACAO' %}checked{% endif %}>
+                                    <label class="custom-control-label font-weight-bold text-success" for="radioDoacao">Doação</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row" id="groupPreco" {% if produto.produto_tipo == 'DOACAO' %}style="display: none;"{% endif %}>
+                        <div class="form-group col-12">
+                            <label class="font-weight-bold">Preço *</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">R$</span>
+                                </div>
+                                <input type="number" name="produto_preco" class="form-control" placeholder="0.00" step="0.01" id="inputPreco" value="{{ produto.produto_preco|stringformat:'.2f'|default:'' }}" {% if produto.produto_tipo != 'DOACAO' %}required{% endif %}>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <label class="font-weight-bold">Descrição do produto</label>
+                            <textarea name="produto_descricao" class="form-control" rows="4" placeholder="Fale sobre o estado de conservação...">{{ produto.produto_descricao|default:'' }}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-12 mb-4">
+                            <label class="font-weight-bold">Fotos do Item *</label>
+                            <div class="card p-3 border bg-light">
+                                <input type="file" name="produto_imagens" class="form-control-file" accept="image/*" {% if not produto %}required{% endif %}>
+                                {% if produto %}
+                                    <small class="text-muted mt-2 d-block">Imagem atual: <a href="{{ produto.produto_imagens.url }}" target="_blank">{{ produto.produto_imagens.name }}</a> (Selecione um novo arquivo apenas se desejar alterar a foto)</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row border-top pt-4">
+                        <div class="col-12 d-flex justify-content-end" style="gap: 15px;">
+                            <a href="{% url 'meus_anuncios' %}" class="btn btn-outline-danger font-weight-bold px-4">Cancelar</a>
+                            <button type="submit" class="btn btn-success btn-lg font-weight-bold px-5">
+                                {% if produto %}Salvar Alterações{% else %}Postar Anúncio{% endif %}
+                            </button>
+                        </div>
+                    </div>
+
+                </form> 
+            </main>
+
+            <aside class="col-md-4">
+                <div class="card shadow-sm border border-warning" style="background-color: #fff9e6;">
+                  <div class="card-body">
+                    <h5 class="card-title font-weight-bold text-warning mb-3"><i class="fas fa-camera"></i> Dica</h5>
+                    <p class="small text-muted">Procure lugares iluminados para tirar as fotos do seu produto!</p>
+                  </div>
+                </div>
+            </aside>
+
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const radioVenda = document.getElementById('radioVenda');
+        const radioDoacao = document.getElementById('radioDoacao');
+        const inputPreco = document.getElementById('inputPreco');
+        const groupPreco = document.getElementById('groupPreco');
+
+        function gerenciarCampoPreco() {
+            if (radioDoacao.checked) {
+                inputPreco.value = '0.00';            
+                inputPreco.removeAttribute('required'); 
+                groupPreco.style.display = 'none';      
+            } else {
+                if (inputPreco.value === '0.00' || inputPreco.value === '0') {
+                    inputPreco.value = '';            
+                }
+                inputPreco.setAttribute('required', 'required'); 
+                groupPreco.style.display = 'block';              
+            }
+        }
+
+        radioVenda.addEventListener('change', gerenciarCampoPreco);
+        radioDoacao.addEventListener('change', gerenciarCampoPreco);
+        
+        if(radioDoacao.checked) {
+            groupPreco.style.display = 'none';
+        }
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="section-content padding-y bg-light border-top">
+    <div class="container">
+        <div class="row">
+            
+            <div class="col-md-3 mb-4">
+                <div class="card shadow-sm border-0">
+                    <article class="card-group-item">
+                        <header class="card-header bg-dark text-white rounded-top">
+                            <h6 class="title mb-0"><i class="fas fa-sliders-h mr-2"></i> Minha Conta</h6>
+                        </header>
+                        <div class="filter-content">
+                            <div class="list-group list-group-flush">
+                                <a href="{% url 'perfil_usuario' %}" class="list-group-item list-group-item-action text-dark">
+                                    <i class="fas fa-user-edit fa-fw mr-2"></i> Meu Perfil
+                                </a>
+                                <a href="{% url 'meus_anuncios' %}" class="list-group-item list-group-item-action active bg-primary border-primary">
+                                    <i class="fas fa-bullhorn fa-fw mr-2"></i> Meus Anúncios
+                                </a>
+                                <a href="{% url 'meus_interesses' %}" class="list-group-item list-group-item-action text-dark">
+                                    <i class="fas fa-handshake fa-fw mr-2"></i> Meus Interesses
+                                </a>
+                                <div class="dropdown-divider my-0"></div>
+                                <a href="{% url 'logout' %}" class="list-group-item list-group-item-action text-danger">
+                                    <i class="fas fa-sign-out-alt fa-fw mr-2"></i> Sair da Conta
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                {% include 'includes/alerts.html' %}
+
+                <div class="card shadow-sm mb-4">
+                    <header class="card-header bg-primary text-white">
+                        <h4 class="card-title mb-0">Meus Anúncios Cadastrados</h4>
+                    </header>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover table-shopping-cart mb-0">
+                            <thead class="text-muted">
+                                <tr class="small text-uppercase">
+                                    <th scope="col">Produto</th>
+                                    <th scope="col" width="120">Preço</th>
+                                    <th scope="col" width="170" class="text-center">Status</th>
+                                    <th scope="col" width="280" class="text-right">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for produto in produtos %}
+                                <tr>
+                                    <td>
+                                        <figure class="itemside align-items-center">
+                                            <div class="aside">
+                                                <img src="{{ produto.produto_imagens.url }}" class="img-sm border rounded" style="width: 60px; height: 60px; object-fit: cover;">
+                                            </div>
+                                            <figcaption class="info">
+                                                <h6 class="title text-dark font-weight-bold mb-0">{{ produto.produto_nome }}</h6>
+                                                <small class="text-muted">Criado em: {{ produto.produto_criado_em|date:"d/m/Y" }}</small>
+                                                {% if produto.donatario %}
+                                                    <div class="mt-1">
+                                                        <span class="badge badge-light text-dark border">
+                                                            {% if produto.produto_tipo == 'DOACAO' %}
+                                                                <i class="fas fa-gift text-success"></i> Reservado p/ Doação
+                                                            {% else %}
+                                                                <i class="fas fa-shopping-bag text-primary"></i> Reservado p/ Venda
+                                                            {% endif %}
+                                                        </span>
+                                                    </div>
+                                                {% endif %}
+                                            </figcaption>
+                                        </figure>
+                                    </td>
+
+                                    <td class="align-middle"> 
+                                        <div class="price-wrap"> 
+                                            {% if produto.produto_tipo == 'DOACAO' %}
+                                                <span class="text-success font-weight-bold">Grátis</span>
+                                            {% else %}
+                                                <var class="price">R$ {{ produto.produto_preco }}</var> 
+                                            {% endif %}
+                                        </div> 
+                                    </td>
+
+                                    <td class="text-center align-middle">
+                                        {% if produto.doacao_confirmada_recebedor %}
+                                            {% if produto.produto_tipo == 'DOACAO' %}
+                                                <span class="badge badge-secondary px-3 py-2">Doação Concluída!</span>
+                                            {% else %}
+                                                <span class="badge badge-dark px-3 py-2">Item Vendido!</span>
+                                            {% endif %}
+                                        {% elif produto.produto_esta_disponivel %}
+                                            <span class="badge badge-success px-3 py-2">Disponível</span>
+                                        {% else %}
+                                            {% if produto.donatario %}
+                                                <span class="badge badge-info px-3 py-2 text-white">Em Andamento</span>
+                                            {% else %}
+                                                <span class="badge badge-warning px-3 py-2 text-white">Pausado</span>
+                                            {% endif %}
+                                        {% endif %}
+
+                                        {% if produto.donatario %}
+                                            <div class="mt-2 text-left bg-light p-2 rounded border small" style="font-size: 11px; line-height: 1.4;">
+                                                <strong class="text-dark">
+                                                    <i class="fas fa-user-check"></i> 
+                                                    {% if produto.produto_tipo == 'DOACAO' %}Reservado para:{% else %}Vendido para:{% endif %}
+                                                </strong> 
+                                                
+                                                <span class="text-primary font-weight-bold">{{ produto.donatario.username|default:produto.donatario.nome|default:"Usuário" }}</span>
+                                                
+                                                {% if produto.donatario.telefone and not produto.doacao_confirmada_recebedor %}
+                                                    <a href="https://wa.me/55{{ produto.donatario.telefone }}?text=Olá!%20Fiquei%20interessado%20em%20combinar%20sobre%20o%20produto%20'{{ produto.produto_nome }}'." 
+                                                       target="_blank" 
+                                                       class="btn btn-sm btn-success btn-block mt-2 font-weight-bold py-1" 
+                                                       style="font-size: 10px;">
+                                                        <i class="fab fa-whatsapp"></i> Conversar
+                                                    </a>
+                                                {% endif %}
+                                                
+                                                <hr class="my-1">
+                                                {% if produto.doacao_confirmada_recebedor %}
+                                                    <span class="text-success font-weight-bold d-block"><i class="fas fa-check-circle"></i> Entrega Concluída!</span>
+                                                {% else %}
+                                                    <span class="text-warning font-weight-bold d-block"><i class="fas fa-hourglass-half"></i> Aguardando confirmação...</span>
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}
+                                    </td>
+
+                                    <td class="text-right align-middle">
+                                        {% if not produto.doacao_confirmada_recebedor %}
+                                            <a href="{% url 'visualizar_interessados' produto.id %}" class="btn btn-sm btn-info text-white mr-1 shadow-sm">
+                                                <i class="fa fa-users"></i> Interessados
+                                            </a>
+                                            
+                                            <a href="{% url 'alternar_disponibilidade' produto.id %}" class="btn btn-sm {% if produto.produto_esta_disponivel %}btn-warning text-white{% else %}btn-success{% endif %}">
+                                                {% if produto.produto_esta_disponivel %}
+                                                    <i class="fa fa-eye-slash"></i> Pausar
+                                                {% else %}
+                                                    <i class="fa fa-eye"></i> Ativar
+                                                {% endif %}
+                                            </a>
+                                            <a href="{% url 'editar_produto' produto.id %}" class="btn btn-sm btn-outline-primary ml-1">
+                                                <i class="fa fa-edit"></i> Editar
+                                            </a>
+                                        {% else %}
+                                            <button class="btn btn-sm btn-secondary" disabled>
+                                                <i class="fas fa-lock"></i> Finalizado
+                                            </button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center py-5">
+                                        <p class="text-muted mb-3">Você ainda não anunciou nenhum produto.</p>
+                                        <a href="{% url 'cadastrar_produto' %}" class="btn btn-primary font-weight-bold">Criar Meu Primeiro Anúncio</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-start">
+                    <a href="{% url 'home' %}" class="btn btn-light border shadow-sm">
+                        <i class="fas fa-home mr-1"></i> Voltar para a Home
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock %}

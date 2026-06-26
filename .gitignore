@@ -1,0 +1,9 @@
+virtual/
+db.sqlite3
+__pycache__/
+*.py[cod]
+.vscode/
+.env
+*.log
+.DS_Store
+Thumbs.db

@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="section-content padding-y bg-light">
+    <div class="container">
+        <div class="card shadow-sm">
+            <header class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-sort-amount-down"></i> Lista de Interessados na Doação (Ordem de Prioridade)</h5>
+                <span class="badge badge-light text-dark font-weight-bold">{{ produto.produto_nome }}</span>
+            </header>
+            
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="text-muted bg-light">
+                        <tr class="small text-uppercase">
+                            <th scope="col">Interessado na Doação</th>
+                            <th scope="col" class="text-center">Renda Per Capita</th>
+                            <th scope="col" class="text-right">Ações de Negociação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in interesses_registrados %}
+                        <tr>
+                            <td class="align-middle">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-user-circle fa-2x text-secondary mr-3"></i>
+                                    <div>
+                                        <strong class="text-dark">
+                                            {% if item.usuario_interessado %}
+                                                {{ item.usuario_interessado.get_full_name|default:item.usuario_interessado.email }}
+                                            {% else %}
+                                                {{ item.usuario.get_full_name|default:item.usuario.email }}
+                                            {% endif %}
+                                        </strong>
+                                        <br><small class="text-muted">Manifestou interesse em: {{ item.data_interesse|date:"d/m/Y \à\s H:i" }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            
+                            <td class="align-middle text-center">
+                                <span class="badge badge-pill {% if forloop.first %}badge-danger{% else %}badge-warning{% endif %} px-3 py-2 font-weight-bold" style="font-size: 13px;">
+                                    R$ 
+                                    {% if item.renda_per_capita %}
+                                        {{ item.renda_per_capita|floatformat:2 }}
+                                    {% elif item.usuario_interessado.renda_per_capita %}
+                                        {{ item.usuario_interessado.renda_per_capita|floatformat:2 }}
+                                    {% elif item.usuario.renda_per_capita %}
+                                        {{ item.usuario.renda_per_capita|floatformat:2 }}
+                                    {% else %}
+                                        0,00
+                                    {% endif %}
+                                </span>
+                                {% if forloop.first %}
+                                    <br><small class="text-danger font-weight-bold" style="font-size: 10px; text-uppercase: true;">Maior Prioridade</small>
+                                {% endif %}
+                            </td>
+
+                            <td class="text-right align-middle">
+                                {% if item.usuario_interessado.telefone %}
+                                    <a href="https://wa.me/55{{ item.usuario_interessado.telefone|cut:' '|cut:'-'|cut:'('|cut:')' }}?text=Ola!%20Vi%20seu%20interesse%20na%20doacao%20do%20item%20{{ produto.produto_nome|urlencode }}" 
+                                       target="_blank" class="btn btn-sm btn-success font-weight-bold mr-2">
+                                        <i class="fab fa-whatsapp"></i> Negociar no Zap
+                                    </a>
+                                {% elif item.usuario.telefone %}
+                                    <a href="https://wa.me/55{{ item.usuario.telefone|cut:' '|cut:'-'|cut:'('|cut:')' }}?text=Ola!%20Vi%20seu%20interesse%20na%20doacao%20do%20item%20{{ produto.produto_nome|urlencode }}" 
+                                       target="_blank" class="btn btn-sm btn-success font-weight-bold mr-2">
+                                        <i class="fab fa-whatsapp"></i> Negociar no Zap
+                                    </a>
+                                {% endif %}
+
+                                {% if item.usuario_interessado %}
+                                    <a href="{% url 'doar_para_usuario' produto.id item.usuario_interessado.id %}" class="btn btn-sm btn-success font-weight-bold shadow-sm">
+                                        <i class="fas fa-check-circle"></i> Confirmei a Doação
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'doar_para_usuario' produto.id item.usuario.id %}" class="btn btn-sm btn-success font-weight-bold shadow-sm">
+                                        <i class="fas fa-check-circle"></i> Confirmei a Doação
+                                    </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center py-5">
+                                <p class="text-muted mb-0">Nenhum interessado nesta doação até o momento.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="card-footer bg-white">
+                <a href="{% url 'meus_anuncios' %}" class="btn btn-light border"><i class="fas fa-arrow-left"></i> Voltar aos meus anúncios</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

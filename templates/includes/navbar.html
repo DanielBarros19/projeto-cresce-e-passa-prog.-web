@@ -1,0 +1,89 @@
+{% load static %}
+<header class="section-header">
+<section class="header-main border-bottom">
+    <div class="container">
+<div class="row align-items-center">
+    
+    <div class="col-lg-2 col-md-3 col-6">
+        <a href="{% url 'home' %}" class="brand-wrap">
+<a class="navbar-brand" href="{% url 'home' %}">
+    <img src="{% static 'images/logo_cresce_e_passa.png' %}" alt="Cresce e Passa" style="max-height: 45px; width: auto; object-fit: contain;">
+</a>        </a> 
+    </div>
+    
+    <div class="col-lg-4 col-md-5 col-6 d-flex align-items-center justify-content-start" style="gap: 8px;">
+        <div class="category-wrap dropdown">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"> 
+                <i class="fa fa-bars"></i>
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="{% url 'visualizarLoja' %}">Todos os Produtos</a>
+                <div class="dropdown-divider"></div>
+                {% for categoria in listaCategorias %}
+                    <a class="dropdown-item" href="{% url 'visualizarLoja_por_categoria' categoria.slug %}">
+                        {{ categoria.categoria_nome }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>  
+        
+        <a href="{% url 'visualizarLoja' %}" class="btn btn-outline-primary">Loja</a>
+        
+        <a href="{% url 'cadastrar_produto' %}" class="btn btn-primary font-weight-bold" style="white-space: nowrap;">
+            <i class="fa fa-plus-circle"></i> Anunciar
+        </a>
+    </div> 
+
+    <div class="col-lg-3 col-md-4 col-12 my-3 my-lg-0">
+        <form action="{% url 'visualizarLoja' %}" method="GET" class="search">
+            <div class="input-group w-100">
+                <input type="text" class="form-control" placeholder="O que você procura?" name="keyword" value="{{ request.GET.keyword|default:'' }}">
+                <div class="input-group-append">
+                  <button class="btn btn-primary" type="submit">
+                    <i class="fa fa-search"></i>
+                  </button>
+                </div>
+            </div>
+        </form> 
+    </div> 
+
+    <div class="col-lg-3 col-sm-6 col-12 order-2 order-lg-3">
+        <div class="d-flex justify-content-end align-items-center mb-3 mb-lg-0">
+            <div class="widget-header">
+                
+                {% if user.is_authenticated %}
+                    <div class="d-flex flex-column align-items-end">
+                        <a href="{% url 'perfil_usuario' %}" class="text-dark font-weight-bold text-right text-decoration-none">
+                            <small class="text-muted d-block" style="font-size: 11px; font-weight: normal; margin-bottom: -2px;">Minha Conta</small>
+                            Olá, {{ user.nome }}!
+                        </a>
+                        <a href="{% url 'logout' %}" class="text-danger small font-weight-bold mt-1" style="font-size: 12px;">
+                            <i class="fas fa-sign-out-alt fa-xs"></i> Sair
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="text-right">
+                        <small class="title text-muted">Seja Bem Vindo!</small>
+                        <div style="white-space: nowrap;"> 
+                            <a href="{% url 'signin' %}">Login</a> <span class="dark-transp"> | </span>
+                            <a href="{% url 'register' %}"> Registrar</a>
+                        </div>
+                    </div>
+                {% endif %}
+                
+            </div>
+            
+            <a href="{% url 'meus_interesses' %}" class="widget-header pl-3 ml-2">
+                <div class="icon icon-sm rounded-circle border position-relative">
+                    <i class="fa fa-handshake" style="color: #3167eb;"></i>
+                    {% if quantidade_interesses > 0 %}
+                        <span class="badge badge-pill badge-danger position-absolute" style="top: -5px; right: -5px; font-size: 11px;">
+                            {{ quantidade_interesses }}
+                        </span>
+                    {% endif %}
+                </div>
+            </a>
+        </div> 
+    </div> 
+
+</div> </div> </section> </header>

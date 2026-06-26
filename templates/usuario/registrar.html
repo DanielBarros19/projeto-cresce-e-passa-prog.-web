@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="section-content padding-y bg">
+    <div class="card mx-auto" style="max-width: 600px; margin-top: 40px;">
+        <article class="card-body">
+            <header class="mb-4">
+                <h4 class="card-title">Criar Conta</h4>
+            </header>
+            
+            {% include 'includes/alerts.html' %}
+
+            <form action="{% url 'register' %}" method="POST">
+                {% csrf_token %}
+
+                <div class="form-row">
+                    <div class="col form-group">
+                        <label>Nome Completo</label>
+                        {{ form.nome }}
+                        {{ form.nome.errors }}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="col form-group col-md-6">
+                        <label>Nome de Usuário</label>
+                        {{ form.nomeUsuario }}
+                        {{ form.nomeUsuario.errors }}
+                    </div>
+                    <div class="col form-group col-md-6">
+                        <label>E-mail</label>
+                        {{ form.email }}
+                        {{ form.email.errors }}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="col form-group col-md-6">
+                        <label>CPF</label>
+                        {{ form.cpf }}
+                        {{ form.cpf.errors }}
+                    </div>
+                    <div class="col form-group col-md-6">
+                        <label>Data de Nascimento</label>
+                        {{ form.data_nascimento }}
+                        {{ form.data_nascimento.errors }}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="id_renda_mensal_casa">
+                            Renda Mensal Total da Casa
+                        </label>
+                        {{ form.renda_mensal_casa }}
+                        {{ form.renda_mensal_casa.errors }}
+                        <small class="form-text text-muted">Soma dos rendimentos de todos os moradores.</small>
+                    </div>
+    
+                    <div class="form-group col-md-6">
+                        <label for="id_moradores_casa">
+                            Moradores na Casa
+                        </label>
+                        {{ form.moradores_casa }}
+                        {{ form.moradores_casa.errors }}
+                        <small class="form-text text-muted">Quantidade total de pessoas na residência.</small>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="col form-group col-md-6">
+                        <label>Telefone</label>
+                        {{ form.telefone }}
+                        {{ form.telefone.errors }}
+                    </div>
+                    <div class="col form-group col-md-6">
+                        <label>Endereço</label>
+                        {{ form.endereco }}
+                        {{ form.endereco.errors }}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="col form-group col-md-6">
+                        <label>Criar Senha</label>
+                        {{ form.senha }}
+                        {{ form.senha.errors }}
+                    </div>
+                    <div class="col form-group col-md-6">
+                        <label>Confirmar Senha</label>
+                        {{ form.confirmar_senha }}
+                        {{ form.confirmar_senha.errors }}
+                    </div>
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="form-row mt-4">
+                    <div class="col-md-6 mb-2">
+                        <a href="{% url 'home' %}" class="btn btn-light btn-block border shadow-sm">
+                            <i class="fas fa-arrow-left mr-1"></i> Voltar para Home
+                        </a>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <button type="submit" class="btn btn-primary btn-block font-weight-bold">
+                            Cadastrar 
+                        </button>
+                    </div>
+                </div>
+            </form>
+            
+            <p class="text-center mt-4">Já tem uma conta? <a href="{% url 'signin' %}">Fazer Login</a></p>
+        </article>
+    </div>
+    <br><br>
+</section>
+{% endblock %}

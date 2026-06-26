@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="section-content padding-y bg">
+    <div class="container">
+
+        <div class="card">
+            <div class="row no-gutters">
+                
+                <aside class="col-md-6">
+                    <article class="gallery-wrap"> 
+                        <div class="img-big-wrap text-center p-4">
+                            {% if produto.produto_imagens %}
+                                <img src="{{ produto.produto_imagens.url }}" alt="{{ produto.produto_nome }}" class="img-fluid" style="max-height: 450px; object-fit: contain;">
+                            {% else %}
+                                <img src="{% static 'images/no-image.png' %}" alt="Sem imagem" class="img-fluid" style="max-height: 450px; object-fit: contain;">
+                            {% endif %}
+                        </div>
+                    </article>
+                </aside>
+
+                <main class="col-md-6 border-left">
+                    <article class="content-body p-5">
+
+                        <h2 class="title text-dark font-weight-bold">{{ produto.produto_nome }}</h2>
+                        
+                        <p class="text-muted small text-uppercase mb-3">
+                            Categoria: <strong>{{ produto.produto_categoria.categoria_nome }}</strong>
+                        </p>
+
+                        <div class="mb-4 mt-3"> 
+                            {% if produto.produto_tipo == 'DOACAO' %}
+                                <span class="price h3 text-success">Grátis (Doação)</span>
+                            {% else %}
+                                <span class="price h3 text-success">R$ {{ produto.produto_preco }}</span> 
+                            {% endif %}
+                        </div> 
+
+                        <h5 class="text-secondary mt-4">Descrição do Item</h5>
+                        <p class="text-muted" style="line-height: 1.6; white-space: pre-line;">
+                            {{ produto.produto_descricao }}
+                        </p>
+
+                        <hr class="my-4">
+                        
+                        <p class="text-muted small">
+                            Anunciado por: <strong>{{ produto.usuario.username|default:"Usuário do Cresce e Passa" }}</strong>
+                        </p>
+
+                        <hr class="my-4">
+
+                        {% if produto.usuario == request.user %}
+                            <div class="alert alert-info text-center small mb-3" role="alert">
+                                <i class="fas fa-info-circle mr-1"></i> Este anúncio foi cadastrado por você.
+                            </div>
+                        {% else %}
+                            <a href="{% url 'registrar_interesse' produto.id %}" class="btn btn-primary btn-lg btn-block mb-2"> 
+                                <span class="text">Demonstrar Interesse</span> 
+                                <i class="fas fa-envelope ml-2"></i>
+                            </a>
+                        {% endif %}
+                        
+                        <a href="{% url 'visualizarLoja' %}" class="btn btn-light btn-lg btn-block">
+                            Voltar para a Loja
+                        </a>
+
+                    </article>
+                </main>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

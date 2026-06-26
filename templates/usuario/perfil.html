@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<section class="section-content padding-y bg-light">
+<div class="container">
+    <div class="row">
+        
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm border-0">
+                <article class="card-group-item">
+                    <header class="card-header bg-dark text-white rounded-top">
+                        <h6 class="title mb-0"><i class="fas fa-sliders-h mr-2"></i> Minha Conta</h6>
+                    </header>
+                    <div class="filter-content">
+                        <div class="list-group list-group-flush">
+                            <a href="{% url 'perfil_usuario' %}" class="list-group-item list-group-item-action active bg-primary border-primary">
+                                <i class="fas fa-user-edit fa-fw mr-2"></i> Meu Perfil
+                            </a>
+                            <a href="{% url 'meus_anuncios' %}" class="list-group-item list-group-item-action text-dark">
+                                <i class="fas fa-bullhorn fa-fw mr-2"></i> Meus Anúncios
+                            </a>
+                            <a href="{% url 'meus_interesses' %}" class="list-group-item list-group-item-action text-dark">
+                                <i class="fas fa-handshake fa-fw mr-2"></i> Meus Interesses
+                            </a>
+                            <div class="dropdown-divider my-0"></div>
+                            <a href="{% url 'logout' %}" class="list-group-item list-group-item-action text-danger">
+                                <i class="fas fa-sign-out-alt fa-fw mr-2"></i> Sair da Conta
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-user-edit"></i> Meu Perfil</h4>
+                </div>
+                <div class="card-body">
+                    
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form action="{% url 'perfil_usuario' %}" method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="form-group col-md-6 mb-3">
+                                <label class="font-weight-bold">Nome Completo:</label>
+                                {{ form.nome }}
+                            </div>
+                            <div class="form-group col-md-6 mb-3">
+                                <label class="font-weight-bold">Nome de Usuário:</label>
+                                {{ form.nomeUsuario }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group col-md-6 mb-3">
+                                <label class="font-weight-bold">E-mail:</label>
+                                {{ form.email }}
+                            </div>
+                            <div class="form-group col-md-6 mb-3">
+                                <label class="font-weight-bold">Telefone:</label>
+                                {{ form.telefone }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group col-md-6 mb-3">
+                                <label class="font-weight-bold">CPF:</label>
+                                {{ form.cpf }}
+                                {% if form.cpf.errors %}
+                                    <small class="text-danger">{{ form.cpf.errors.0 }}</small>
+                                {% endif %}
+                            </div>
+                            <div class="form-group col-md-6 mb-3">
+                                <label class="font-weight-bold">Data de Nascimento:</label>
+                                {{ form.data_nascimento }}
+                                {% if form.data_nascimento.errors %}
+                                    <small class="text-danger">{{ form.data_nascimento.errors.0 }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label class="font-weight-bold">Endereço:</label>
+                            {{ form.endereco }}
+                        </div>
+
+                        <hr>
+
+                        <div class="form-group d-flex justify-content-between mb-0">
+                            <button type="submit" class="btn btn-success px-4">Salvar Alterações</button>
+                            <a href="{% url 'home' %}" class="btn btn-light">
+                            <i class="fas fa-home mr-1"></i> Voltar para a Home</a>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+</section>
+
+{% endblock %}

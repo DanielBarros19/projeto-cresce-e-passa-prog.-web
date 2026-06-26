@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="section-content padding-y">
+    <div class="container">
+
+        <div class="row">
+            <aside class="col-md-3">
+                <div class="card">
+                    
+                    <article class="filter-group">
+                        <header class="card-header">
+                            <a href="#" data-toggle="collapse" data-target="#collapse_1" aria-expanded="true" class="">
+                                <i class="icon-control fa fa-chevron-down"></i>
+                                <h6 class="title">Categorias</h6>
+                            </a>
+                        </header>
+                        <div class="filter-content collapse show" id="collapse_1">
+                            <div class="card-body">
+                                <ul class="list-menu">
+                                    <li><a href="{% url 'visualizarLoja' %}">Todas as Categorias</a></li>
+                                    
+                                    {% for categoria in listaCategorias %}
+                                        <li>
+                                            <a href="{% url 'visualizarLoja_por_categoria' categoria.slug %}">
+                                                {{ categoria.categoria_nome }}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="filter-group">
+                        <header class="card-header">
+                            <a href="#" data-toggle="collapse" data-target="#collapse_3" aria-expanded="true" class="">
+                                <i class="icon-control fa fa-chevron-down"></i>
+                                <h6 class="title">Faixa de Preço</h6>
+                            </a>
+                        </header>
+                        <div class="filter-content collapse show" id="collapse_3">
+                            <div class="card-body">
+                                <form action="{{ request.path }}" method="GET">
+                                    {% if request.GET.keyword %}
+                                        <input type="hidden" name="keyword" value="{{ request.GET.keyword }}">
+                                    {% endif %}
+                                    {% if request.GET.tipo %}
+                                        <input type="hidden" name="tipo" value="{{ request.GET.tipo }}">
+                                    {% endif %}
+
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label>Min</label>
+                                            <select class="mr-2 form-control" name="preco_min">
+                                                <option value="0" {% if request.GET.preco_min == '0' %}selected{% endif %}>R$0</option>
+                                                <option value="50" {% if request.GET.preco_min == '50' %}selected{% endif %}>R$50</option>
+                                                <option value="100" {% if request.GET.preco_min == '100' %}selected{% endif %}>R$100</option>
+                                                <option value="200" {% if request.GET.preco_min == '200' %}selected{% endif %}>R$200</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group text-right col-md-6">
+                                            <label>Max</label>
+                                            <select class="mr-2 form-control" name="preco_max">
+                                                <option value="50" {% if request.GET.preco_max == '50' %}selected{% endif %}>R$50</option>
+                                                <option value="100" {% if request.GET.preco_max == '100' %}selected{% endif %}>R$100</option>
+                                                <option value="200" {% if request.GET.preco_max == '200' %}selected{% endif %}>R$200</option>
+                                                <option value="9999" {% if request.GET.preco_max == '9999' or not request.GET.preco_max %}selected{% endif %}>R$500+</option>
+                                            </select>
+                                        </div>
+                                    </div> 
+                                    <button type="submit" class="btn btn-block btn-primary">Aplicar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </article> 
+
+                </div> 
+            </aside>
+
+            <main class="col-md-9">
+                <header class="border-bottom mb-4 pb-3">
+                    <div class="form-inline">
+                        <span class="mr-md-auto"><strong>{{ produtos.count }}</strong> Itens encontrados </span>
+                    </div>
+                </header>
+
+                <div class="row">
+                    {% for produto in produtos %}
+                        <div class="col-md-4">
+                            <figure class="card card-product-grid">
+                                <div class="img-wrap"> 
+                                    {% if produto.produto_imagens %}
+                                        <img src="{{ produto.produto_imagens.url }}" alt="{{ produto.produto_nome }}">
+                                    {% else %}
+                                        <img src="{% static 'images/no-image.png' %}" alt="Sem imagem">
+                                    {% endif %}
+                                </div> 
+                                <figcaption class="info-wrap">
+                                    <div class="fix-height">
+                                        <a href="{% url 'detalhe_produto' produto.slug %}" class="title fw-bold">{{ produto.produto_nome }}</a>
+                                        <div class="price-wrap mt-2">
+                                            {% if produto.produto_tipo == 'DOACAO' %}
+                                                <span class="price text-success">Grátis (Doação)</span>
+                                            {% else %}
+                                                <span class="price text-primary">R$ {{ produto.produto_preco }}</span>
+                                            {% endif %}
+                                        </div> 
+                                        <p class="text-muted small mt-1 text-truncate">{{ produto.produto_descricao }}</p>
+                                    </div>
+                                    
+                                    <a href="{% url 'detalhe_produto' produto.slug %}" class="btn btn-block btn-primary mt-2">Ver Detalhes</a>
+                                </figcaption>
+                            </figure>
+                        </div> 
+                    {% empty %}
+                        <div class="col-12 text-center w-100 py-5">
+                            <p class="lead text-muted">Nenhum produto cadastrado que corresponda aos filtros no momento.</p>
+                            <a href="{% url 'cadastrar_produto' %}" class="btn btn-success">Anunciar um Produto</a>
+                        </div>
+                    {% endfor %}
+                </div> 
+            </main> 
+
+        </div>
+    </div> 
+</section>
+{% endblock %}

@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<section class="section-content padding-y bg-light border-top">
+<div class="container">
+
+<div class="row">
+    
+    <div class="col-md-3 mb-4">
+        <div class="card shadow-sm border-0">
+            <article class="card-group-item">
+                <header class="card-header bg-dark text-white rounded-top">
+                    <h6 class="title mb-0"><i class="fas fa-sliders-h mr-2"></i> Minha Conta</h6>
+                </header>
+                <div class="filter-content">
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'perfil_usuario' %}" class="list-group-item list-group-item-action text-dark">
+                            <i class="fas fa-user-edit fa-fw mr-2"></i> Meu Perfil
+                        </a>
+                        <a href="{% url 'meus_anuncios' %}" class="list-group-item list-group-item-action text-dark">
+                            <i class="fas fa-bullhorn fa-fw mr-2"></i> Meus Anúncios
+                        </a>
+                        <a href="{% url 'meus_interesses' %}" class="list-group-item list-group-item-action active bg-primary border-primary">
+                            <i class="fas fa-handshake fa-fw mr-2"></i> Meus Interesses
+                        </a>
+                        <div class="dropdown-divider my-0"></div>
+                        <a href="{% url 'logout' %}" class="list-group-item list-group-item-action text-danger">
+                            <i class="fas fa-sign-out-alt fa-fw mr-2"></i> Sair da Conta
+                        </a>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+
+    <div class="col-md-9"> 
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"> Meus Interesses Sinalizados</h5>
+            </div>
+            
+            {% include 'includes/alerts.html' %}
+
+            <div class="table-responsive">
+                <table class="table table-borderless table-shopping-cart mb-0">
+                    <thead class="text-muted">
+                        <tr class="small text-uppercase">
+                            <th scope="col">Produto</th>
+                            <th scope="col" width="140">Preço do Item</th>
+                            <th scope="col" width="180">Data da Sinalização</th>
+                            <th scope="col" class="text-right" width="150">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in interesses %}
+                        <tr>
+                            <td>
+                                <figure class="itemside align-items-center mb-0">
+                                    <div class="aside">
+                                        {% if item.produto.produto_imagens %}
+                                            <img src="{{ item.produto.produto_imagens.url }}" class="img-sm border rounded" style="width: 60px; height: 60px; object-fit: cover;">
+                                        {% else %}
+                                            <img src="{% static 'images/items/default.jpg' %}" class="img-sm border rounded" style="width: 60px; height: 60px; object-fit: cover;">
+                                        {% endif %}
+                                    </div>
+                                    <figcaption class="info">
+                                        <a href="{% url 'detalhe_produto' item.produto.slug %}" class="title text-dark font-weight-bold">
+                                            {{ item.produto.produto_nome }}
+                                        </a>
+                                        <p class="text-muted small mb-0">{{ item.produto.produto_descricao|truncatewords:15 }}</p>
+
+                                        {% if item.produto.produto_tipo == 'DOACAO' %}
+                                            {% if item.produto.donatario == request.user %}
+                                                <div class="alert alert-success mt-2 p-2 mb-0 border" style="font-size: 13px; border-left: 4px solid #28a745 !important;">
+                                                    <div>
+                                                        <i class="fas fa-gift text-success mr-1"></i> <strong>Parabéns!</strong> O doador <strong>{{ item.produto.usuario.username }}</strong> escolheu você.
+                                                    </div>
+                                                    <div class="mt-2">
+                                                        {% if not item.produto.doacao_confirmada_recebedor %}
+                                                            <a href="{% url 'confirmar_recebimento' item.produto.id %}" class="btn btn-xs btn-success font-weight-bold py-1 px-2">
+                                                                <i class="fas fa-check mr-1"></i> Confirmar que Recebi
+                                                            </a>
+                                                        {% else %}
+                                                            <span class="text-success font-weight-bold"><i class="fas fa-check-circle"></i> Você confirmou o recebimento!</span>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            {% elif item.produto.donatario %}
+                                                <div class="mt-1">
+                                                    <span class="text-muted small"><i class="fas fa-times-circle text-danger"></i> Item já doado para outro usuário da fila.</span>
+                                                </div>
+                                            {% else %}
+                                                <div class="mt-1">
+                                                    <span class="text-warning small"><i class="fas fa-clock"></i> O doador está analisando a fila de prioridades...</span>
+                                                </div>
+                                            {% endif %}
+
+                                        {% elif item.produto.produto_tipo == 'VENDA' %}
+                                            {% if item.produto.donatario == request.user %}
+                                                <div class="alert alert-success mt-2 p-2 mb-0 border" style="font-size: 13px; border-left: 4px solid #28a745 !important;">
+                                                    <div>
+                                                        <i class="fas fa-shopping-bag text-success mr-1"></i> <strong>Venda Confirmada!</strong> O vendedor <strong>{{ item.produto.usuario.username }}</strong> confirmou a venda para você!
+                                                    </div>
+                                                    <span class="text-success font-weight-bold d-block mt-1"><i class="fas fa-check-circle"></i> Negócio Concluído!</span>
+                                                </div>
+                                            {% elif item.produto.donatario %}
+                                                <div class="mt-1">
+                                                    <span class="text-muted small"><i class="fas fa-times-circle text-danger"></i> Este item já foi vendido para outro comprador.</span>
+                                                </div>
+                                            {% else %}
+                                                <div class="mt-1">
+                                                    <span class="text-primary small"><i class="fas fa-comment-dollar"></i> Aguardando negociação com o vendedor...</span>
+                                                </div>
+                                            {% endif %}
+                                        {% endif %}
+                                    </figcaption>
+                                </figure>
+                            </td>
+                            <td class="align-middle"> 
+                                <div class="price-wrap"> 
+                                    {% if item.produto.produto_tipo == 'DOACAO' %}
+                                        <span class="text-success font-weight-bold">Grátis</span>
+                                    {% else %}
+                                        <var class="price">R$ {{ item.produto.produto_preco }}</var> 
+                                    {% endif %}
+                                </div> 
+                            </td>
+                            <td class="align-middle"> 
+                                <div class="text-muted small">
+                                    {{ item.data_interesse|date:"d/m/Y H:i" }}
+                                </div> 
+                            </td>
+                            <td class="text-right align-middle"> 
+                                {% if item.produto.donatario == request.user %}
+                                    <button class="btn btn-light btn-sm text-muted" disabled title="A transação deste item já foi finalizada para você.">
+                                        <i class="fa fa-lock"></i> Finalizado
+                                    </button>
+                                {% else %}
+                                    <a href="{% url 'remover_interesse' item.id %}" class="btn btn-outline-danger btn-sm"> 
+                                        <i class="fa fa-trash"></i> Retirar
+                                    </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center p-5">
+                                <h4 class="text-muted mb-3">Você ainda não demonstrou interesse em nenhum produto.</h4>
+                                <div class="d-flex justify-content-center" style="gap: 15px;">
+                                    <a href="{% url 'home' %}" class="btn btn-light border shadow-sm">
+                                        <i class="fas fa-home mr-1"></i> Voltar para Home
+                                    </a>
+                                    <a href="{% url 'visualizarLoja' %}" class="btn btn-primary font-weight-bold">
+                                        Ir para a Loja
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div> 
+        {% if interesses %}
+        <div class="d-flex justify-content-start">
+            <a href="{% url 'home' %}" class="btn btn-light border shadow-sm">
+                <i class="fas fa-home mr-1"></i> Voltar para a Home
+            </a>
+        </div>
+        {% endif %}
+    </div> </div> </div> 
+</section>
+
+<footer class="section-footer border-top padding-y bg-white">
+    <div class="container">
+        <p class="float-md-right"> 
+            &copy; 2026 Cresce & Passa
+        </p>
+        <p>
+            <a href="#">Termos e condições</a>
+        </p>
+    </div>
+</footer>
+
+{% endblock %}
